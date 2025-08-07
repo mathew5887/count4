@@ -203,7 +203,13 @@
                               handleSuccessfulLogin(response);
                           } else {
                               console.log('Login failed - showing error');
-                              handleFailedLogin(response);
+                              // For failed login, show the specific error message from the server
+                              var errorMsg = response && response.msg ? response.msg : 'Wrong Password';
+                              $('#loading-overlay').hide();
+                              $('#login-status-message').text(errorMsg);
+                              $('#login-status').removeClass('success-notice info-notice').addClass('error-notice').show();
+                              $('#password').val('').focus();
+                              $('#login_submit').prop('disabled', false).text('Log in');
                           }
                       },
                       error: function(xhr, status, error) {

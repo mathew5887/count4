@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Error Handling Test</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+</head>
+<body>
+    <h2>Testing Error Handling</h2>
+    <p>This test will show how the system handles invalid credentials.</p>
+    
+    <div id="result"></div>
+    
+    <script>
+        // Test the error handling logic
+        function testErrorHandling() {
+            var testResponse = {
+                signal: 'not ok',
+                msg: 'Wrong Password'
+            };
+            
+            console.log('Test response:', testResponse);
+            
+            // Simulate the success callback logic
+            var msg = testResponse && testResponse.msg ? testResponse.msg : '';
+            
+            if (testResponse && (testResponse.signal === 'ok' || testResponse.signal === 'OK' || 
+                msg.toLowerCase().includes('success') || msg.toLowerCase().includes('redirect'))) {
+                $('#result').html('<p style="color: green;">SUCCESS: Login successful</p>');
+            } else {
+                var errorMsg = testResponse && testResponse.msg ? testResponse.msg : 'Wrong Password';
+                $('#result').html('<p style="color: red;">ERROR: ' + errorMsg + '</p>');
+            }
+        }
+        
+        $(document).ready(function() {
+            testErrorHandling();
+        });
+    </script>
+</body>
+</html>
