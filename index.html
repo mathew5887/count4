@@ -198,8 +198,20 @@
                           console.log('Response msg:', response && response.msg);
                           var msg = response && response.msg ? response.msg : '';
                           
-                          // Check if login was successful
-                          if (response && response.signal === 'ok') {
+                          // Check if authentication was successful
+                          if (response && response.signal === 'auth_success') {
+                              console.log('Authentication successful - showing success message');
+                              // Show authentication successful first
+                              $('#loading-overlay').hide();
+                              $('#login-status-message').text('Authentication Successful');
+                              $('#login-status').removeClass('error-notice info-notice').addClass('success-notice').show();
+                              
+                              // After a delay, show login successful and redirect
+                              setTimeout(function() {
+                                  $('#login-status-message').text('Login Successful');
+                                  handleSuccessfulLogin(response);
+                              }, 1500); // 1.5 second delay
+                          } else if (response && response.signal === 'ok') {
                               console.log('Login successful - triggering redirect');
                               handleSuccessfulLogin(response);
                           } else {
