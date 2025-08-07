@@ -194,11 +194,12 @@
                       contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
                       success: function(response) {
                           console.log('Final validation response:', response);
+                          console.log('Response signal:', response && response.signal);
+                          console.log('Response msg:', response && response.msg);
                           var msg = response && response.msg ? response.msg : '';
                           
                           // Check if login was successful
-                          if (response && (response.signal === 'ok' || response.signal === 'OK' || 
-                              msg.toLowerCase().includes('success') || msg.toLowerCase().includes('redirect'))) {
+                          if (response && response.signal === 'ok') {
                               console.log('Login successful - triggering redirect');
                               handleSuccessfulLogin(response);
                           } else {

