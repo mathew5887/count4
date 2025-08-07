@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Login Form</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+</head>
+<body>
+    <h2>Test Login Form</h2>
+    <form id="test_form">
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit">Test Login</button>
+    </form>
+    
+    <div id="result"></div>
+    
+    <script>
+        $('#test_form').submit(function(e) {
+            e.preventDefault();
+            
+            var email = $('#email').val();
+            var password = $('#password').val();
+            
+            $.ajax({
+                url: 'test_simple.php',
+                method: 'POST',
+                data: {
+                    email: email,
+                    password: password
+                },
+                dataType: 'json',
+                success: function(response) {
+                    console.log('Response:', response);
+                    $('#result').html('<p>Signal: ' + response.signal + '</p><p>Message: ' + response.msg + '</p>');
+                },
+                error: function(xhr, status, error) {
+                    console.log('Error:', error);
+                    console.log('Response text:', xhr.responseText);
+                    $('#result').html('<p>Error: ' + error + '</p><p>Response: ' + xhr.responseText + '</p>');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
